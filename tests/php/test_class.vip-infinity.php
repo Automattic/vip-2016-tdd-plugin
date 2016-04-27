@@ -21,10 +21,6 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$wp_rest_server = null;
 	}
 
-	function test_init_does_something() {
-		VipInfinity::init();
-	}
-
 	function test_endpoint_returns_next_article() {
 		$recent = new DateTime('2016-04-12');
 		$a_while_ago = new DateTime('2016-03-05');
