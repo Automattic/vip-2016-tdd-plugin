@@ -16,7 +16,8 @@ class VipInfinity {
 			array( 
 				'post_status' => 'publish', 
 				'post_type' => 'post', 
-				'date_query' => array( 'before' => $more_recent_post->post_date ) 
+				'date_query' => array( 'before' => $more_recent_post->post_date ),
+				'suppress_filters' => false
 			)
 		);
 
