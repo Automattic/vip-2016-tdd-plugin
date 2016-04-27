@@ -40,6 +40,6 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( $second_article_id, $response->get_data()['id'] );
+		$this->assertEquals( $second_article_id, $response->get_data()['ID'] );
 	}
 }
