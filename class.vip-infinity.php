@@ -27,7 +27,10 @@ class VipInfinity {
 		$next_post = $posts[0];
 
 		return array(
-			'ID' => $next_post->ID
+			'ID' => $next_post->ID,
+			'post_title' => $next_post->post_title,
+			'post_content' => $next_post->post_content,
+			'post_date' => $next_post->post_date,
 		);
 	}
 }
