@@ -52,4 +52,22 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( false, $response->get_data() );
 	}
+
+	function test_article_is_valid() {
+		$recent = new DateTime('2016-04-12');
+		$a_while_ago = new DateTime('2016-03-05');
+		$mysql_format = 'Y-m-d H:i:s';
+
+		$first_article_id = $this->factory->post->create( array( 'post_status' => 'publish', 'post_date' => $recent->format($mysql_format) ) );
+		$second_article_id = $this->factory->post->create( array( 'post_status' => 'publish', 'post_date' => $a_while_ago->format($mysql_format) ) );
+
+		$request = new WP_REST_Request( 'GET', '/vip-infinity/v1/next-article/'.$first_article_id );
+		$response = $this->server->dispatch( $request );
+		$data = $response->get_data();
+
+		$this->assertArrayHasKey( 'post_title', $data );
+		$this->assertArrayHasKey( 'post_content', $data );
+		$this->assertArrayHasKey( 'post_date', $data );
+
+	}
 }
