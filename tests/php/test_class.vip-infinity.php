@@ -42,4 +42,14 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$this->assertEquals( 200, $response->get_status() );
 		$this->assertEquals( $second_article_id, $response->get_data()['ID'] );
 	}
+
+	function test_no_next_article_returns_false() {
+		$article_id = $this->factory->post->create( array( 'post_status' => 'publish' ) );
+		$request = new WP_REST_Request( 'GET', '/vip-infinity/v1/next-article/'.$article_id );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( false, $response->get_data() );
+	}
 }
