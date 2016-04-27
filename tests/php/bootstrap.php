@@ -22,10 +22,46 @@ if( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 
 require $test_root . '/includes/functions.php';
 
-// Activates this plugin in WordPress so it can be tested.
+$wp_api_plugin_path = dirname( __FILE__ ) . '/../../../WP-API';
+
+// Activates this plugin and its dependency in WordPress so it can be tested.
 function _manually_load_plugin() {
+	require dirname( __FILE__ ) . '/../../../WP-API/plugin.php';
 	require dirname( __FILE__ ) . '/../../infinity.php';
 }
 tests_add_filter( 'plugins_loaded', '_manually_load_plugin' );
 
+// this is copied/modified from the WP-API plugin v2
+define( 'REST_TESTS_IMPOSSIBLY_HIGH_NUMBER', 99999999 );
+define( 'REST_REQUEST', true );
+
 require $test_root . '/includes/bootstrap.php';
+
+// Helper classes
+if ( ! class_exists( 'WP_Test_REST_TestCase' ) ) {
+	require_once $wp_api_plugin_path . '/tests/class-wp-test-rest-testcase.php';
+}
+function test_rest_expand_compact_links( $links ) {
+	if ( empty( $links['curies'] ) ) {
+		return $links;
+	}
+	foreach ( $links as $rel => $links_array ) {
+		if ( ! strpos( $rel, ':' ) ) {
+			continue;
+		}
+
+		$name = explode( ':', $rel );
+
+		$curie = wp_list_filter( $links['curies'], array( 'name' => $name[0] ) );
+		$full_uri = str_replace( '{rel}', $name[1], $curie[0]['href'] );
+		$links[ $full_uri ] = $links_array;
+		unset( $links[ $rel ] );
+	}
+	return $links;
+}
+
+require_once $wp_api_plugin_path . '/tests/class-wp-test-rest-controller-testcase.php';
+require_once $wp_api_plugin_path . '/tests/class-wp-test-rest-post-type-controller-testcase.php';
+require_once $wp_api_plugin_path . '/tests/class-wp-test-spy-rest-server.php';
+require_once $wp_api_plugin_path . '/tests/class-wp-rest-test-controller.php';
+
