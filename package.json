@@ -25,6 +25,9 @@
     "grunt-cli": "^1.2.0",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-qunit": "^1.2.0",
-    "grunt-contrib-watch": "^1.0.0"
+    "grunt-contrib-watch": "^1.0.0",
+    "qunitjs": "^2.0.0-rc1",
+    "sinon": "^1.17.4",
+    "sinon-qunit": "automattic/sinon-qunit"
   }
 }
