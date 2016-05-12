@@ -46,7 +46,7 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$response = $this->server->dispatch( $request );
 
 		$this->assertEquals( 404, $response->get_status() );
-		$this->assertEquals( false, $response->get_data() );
+		$this->assertEquals( 'next_post_not_found', $response->get_data()['code'] );
 	}
 
 	function test_article_is_valid() {
