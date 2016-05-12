@@ -21,6 +21,13 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$wp_rest_server = null;
 	}
 
+	function test_endpoint_returns_404_invalid_article() {
+		$request = new WP_REST_Request( 'GET', '/vip-infinity/v1/next-article/' . 999999999 );
+		$response = $this->server->dispatch( $request );
+		$this->assertEquals( 404, $response->get_status() );
+		$this->assertEquals( 'recent_post_not_found', $response->get_data()['code'] );
+	}
+
 	function test_endpoint_returns_next_article() {
 		$recent = new DateTime('2016-04-12');
 		$a_while_ago = new DateTime('2016-03-05');

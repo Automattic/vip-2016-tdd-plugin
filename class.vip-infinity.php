@@ -12,6 +12,9 @@ class VipInfinity {
 
 	static function next_article( WP_REST_Request $data ) {
 		$more_recent_post = WP_Post::get_instance( $data['id'] );
+		if ( empty( $more_recent_post ) ) {
+			return new WP_Error( 'recent_post_not_found', 'No recent post found', array( 'status' => 404 ) );
+		}
 		$posts = get_posts( 
 			array( 
 				'post_status' => 'publish', 
