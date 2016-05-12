@@ -45,7 +45,7 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 404, $response->get_status() );
 		$this->assertEquals( false, $response->get_data() );
 	}
 

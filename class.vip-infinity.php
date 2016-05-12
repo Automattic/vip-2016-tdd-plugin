@@ -22,7 +22,7 @@ class VipInfinity {
 		);
 
 		if ( count( $posts ) === 0 ) {
-			return false;
+			return new WP_Error( 'next_post_not_found', 'No next post found', array( 'status' => 404 ) );
 		}
 
 		$next_post = $posts[0];
