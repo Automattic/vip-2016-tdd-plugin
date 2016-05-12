@@ -24,8 +24,10 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 	function test_endpoint_returns_404_invalid_article() {
 		$request = new WP_REST_Request( 'GET', '/vip-infinity/v1/next-article/' . 999999999 );
 		$response = $this->server->dispatch( $request );
-		$this->assertEquals( 404, $response->get_status() );
-		$this->assertEquals( 'recent_post_not_found', $response->get_data()['code'] );
+		$this->assertResponseStatus( 404, $response );
+		$this->assertResponseData( array(
+			'code' => 'recent_post_not_found',
+		), $response );
 	}
 
 	function test_endpoint_returns_next_article() {
@@ -42,8 +44,10 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( $second_article_id, $response->get_data()['ID'] );
+		$this->assertResponseStatus( 200, $response );
+		$this->assertResponseData( array(
+			'ID'     => $second_article_id,
+		), $response );
 	}
 
 	function test_no_next_article_returns_false() {
@@ -52,8 +56,10 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 
 		$response = $this->server->dispatch( $request );
 
-		$this->assertEquals( 404, $response->get_status() );
-		$this->assertEquals( 'next_post_not_found', $response->get_data()['code'] );
+		$this->assertResponseStatus( 404, $response );
+		$this->assertResponseData( array(
+			'code'    => 'next_post_not_found',
+		), $response );
 	}
 
 	function test_article_is_valid() {
@@ -62,15 +68,38 @@ class WP_Test_VipInfinity extends WP_UnitTestCase {
 		$mysql_format = 'Y-m-d H:i:s';
 
 		$first_article_id = $this->factory->post->create( array( 'post_status' => 'publish', 'post_date' => $recent->format($mysql_format) ) );
-		$second_article_id = $this->factory->post->create( array( 'post_status' => 'publish', 'post_date' => $a_while_ago->format($mysql_format) ) );
+		$second_article_id = $this->factory->post->create( array(
+			'post_status' => 'publish',
+			'post_date' => $a_while_ago->format($mysql_format),
+			'post_title' => 'Hello TDD',
+			'post_content' => 'TDD is great',
+		) );
 
 		$request = new WP_REST_Request( 'GET', '/vip-infinity/v1/next-article/'.$first_article_id );
 		$response = $this->server->dispatch( $request );
-		$data = $response->get_data();
+		$this->assertResponseStatus( 200, $response );
+		$this->assertResponseData( array(
+			'post_title'     => 'Hello TDD',
+			'post_content'   => 'TDD is great',
+			'post_date'      => '2016-03-05 00:00:00'
+		), $response );
 
-		$this->assertArrayHasKey( 'post_title', $data );
-		$this->assertArrayHasKey( 'post_content', $data );
-		$this->assertArrayHasKey( 'post_date', $data );
+	}
 
+	protected function assertResponseStatus( $status, $response ) {
+		$this->assertEquals( $status, $response->get_status() );
+	}
+
+	protected function assertResponseData( $data, $response ) {
+		$response_data = $response->get_data();
+		$tested_data = array();
+		foreach( $data as $key => $value ) {
+			if ( isset( $response_data[ $key ] ) ) {
+				$tested_data[ $key ] = $response_data[ $key ];
+			} else {
+				$tested_data[ $key ] = null;
+			}
+		}
+		$this->assertEquals( $data, $tested_data );
 	}
 }
